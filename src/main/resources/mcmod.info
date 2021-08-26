@@ -1,0 +1,16 @@
+[
+{
+  "modid": "qF5",
+  "name": "quickF5",
+  "description": "A simple mod that allows a quick look behind or in front the user.",
+  "version": "1.2",
+  "mcversion": "1.8.9",
+  "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "updateUrl": "",
+  "authorList": ["nxtdaydelivery"],
+  "credits": "nxtdaydelivery, and the awesome guys over at Forge.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
