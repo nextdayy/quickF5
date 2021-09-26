@@ -36,7 +36,7 @@ No ghost chunks when turning around unlike PerspectiveMod, they load instantly a
     
 # **Downloads** 
 
-Ad free downloads are availible on the Releases tab of this GitHub page: https://github.com/nxtdaydelivery/quickF5/releases/tag/forge
+Ad free downloads are availible on the Releases tab of this GitHub page: https://github.com/nxtdaydelivery/quickF5/releases/
 Source Code is available in the code tab of this Git as well.
 
 Thank you for viewing! Feel free to report bugs and feature requests on this Git! Lots of new features to be added soon!
