@@ -9,10 +9,6 @@ import java.io.IOException;
 import java.util.Properties;
 import com.google.gson.JsonObject;
 import com.nxtdelivery.quickF5.QuickF5;
-
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.Loader;
 
 

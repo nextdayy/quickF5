@@ -6,6 +6,7 @@ import java.util.List;
 import com.nxtdelivery.quickF5.QuickF5;
 import com.nxtdelivery.quickF5.Reference;
 import com.nxtdelivery.quickF5.config.ConfigHandler.*;
+import com.nxtdelivery.quickF5.util.UpdateChecker;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
@@ -52,6 +53,22 @@ public class ConfigCommand implements ICommand{
 	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
 		try {
 			switch(args[0]) {
+				case "disabled":
+					QuickF5.LOGGER.info("mod state DISABLED set by user command. writing new config...");
+					ConfigHandler.writeConfig("enabled", "false");
+					sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Mod is now disabled. Use /quickF5 enabled to enable it again."));
+					break;
+				case "enabled":
+					QuickF5.LOGGER.info("mod state ENABLED set by user command. writing new config...");
+					ConfigHandler.writeConfig("enabled", "true");
+					sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Mod is now enabled."));
+					break;
+				case "reload":
+					QuickF5.LOGGER.info("Reloading config and version checker...");
+					sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Reloading!"));
+					ConfigHandler.ConfigLoad();
+					QuickF5.updateCheck = UpdateChecker.updateNeeded(Reference.VERSION);
+					sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Reloaded! Relog and check logs for more infomation."));
 				case "mode": 
 					if(args[1].equals("toggle")) {
 						QuickF5.LOGGER.info("TOGGLE mode set by user command. writing new config...");
@@ -70,25 +87,19 @@ public class ConfigCommand implements ICommand{
 							sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Note that mod is disabled. Use /quickF5 enabled to enable it again."));
 						}
 					}
-					break;
-				case "disabled":
-					QuickF5.LOGGER.info("mod state DISABLED set by user command. writing new config...");
-					ConfigHandler.writeConfig("enabled", "false");
-					sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Mod is now disabled. Use /quickF5 enabled to enable it again."));
-					break;
-				case "enabled":
-					QuickF5.LOGGER.info("mod state ENABLED set by user command. writing new config...");
-					ConfigHandler.writeConfig("enabled", "true");
-					sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Mod is now enabled."));
+					else {
+						sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] invalid option for mode (" + args[1] + ")"));
+						sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] command usage: /quickF5 mode [hold/toggle]"));
+					}
 					break;
 				default:
 					sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] invalid option (" + args[0] + ")"));
-					sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Comamnd usage: /quickF5 mode [hold/toggle], /quickF5 [enabled/disabled]"));
+					sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Comamnd usage: /quickF5 mode [hold/toggle], /quickF5 [enabled/disabled], /quickF5 reload"));
 					break;
 			}
 		} catch(Exception e) {
 			sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Command menu (mod version " + Reference.VERSION + ")"));
-			sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Comamnd usage: /quickF5 mode [hold/toggle], /quickF5 [enabled/disabled]"));
+			sender.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "[QuickF5] Comamnd usage: /quickF5 mode [hold/toggle], /quickF5 [enabled/disabled], /quickF5 reload"));
 		}
 	}
 

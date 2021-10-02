@@ -1,10 +1,8 @@
-/* Changelog 1.5.2
- * - added version checker
- * - fixed logging system
- * - added messages in chat on startup
- * - fixed keys registering on first startup
- * - general code cleanup
- * - and a couple more internal features for later releases
+/* Changelog 1.5.4
+ * - fixed version checker crash
+ * - added reload command
+ * - full fix will be very soon.
+ * - more code cleanup
  */
 package com.nxtdelivery.quickF5;
 
@@ -18,6 +16,7 @@ import com.nxtdelivery.quickF5.util.UpdateChecker;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.util.ChatComponentText;
@@ -26,6 +25,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -50,7 +50,7 @@ public class QuickF5 {
 	public static final Logger LOGGER = LogManager.getLogger("QuickF5");
 	private static boolean active = false;
 	private int perspectiveMode = 0;
-	private boolean updateCheck;
+	public static boolean updateCheck;
 	
 	public boolean registerBus(EventBus bus, LoadController controller) {				// register mod to the bus
 		bus.register(this);
@@ -124,43 +124,95 @@ public class QuickF5 {
 			active = false;
 		}
 	}
+	
+	
+	
 	@SubscribeEvent
-	public void onWorldLoad(WorldEvent.Load event) {
-		if(ConfigHandler.firstStart == true) {
-			updateCheck = false;
-			ConfigHandler.fileCorrupt = false;			// just in case something wierd happens
-			QuickF5.LOGGER.info("Thank you for installing quickF5! I hope that you enjoy it!");
-			new TickDelay(() ->  sendMessages("","[QuickF5] Thank you for installing quickF5! I hope that you enjoy it!","[QuickF5] If you want to configure the mod, type /quickF5 for more."),20); 
-			ConfigHandler.firstStart = false;
-			return;
-		}
-		if(updateCheck == true) {
-			new TickDelay(() -> sendUpdateMessage(),20);
-			updateCheck = false;
-			return;
-		}
-		if(ConfigHandler.fileCorrupt == true) {
-			new TickDelay(() ->  sendMessages("","[QuickF5] An error occured while trying to read config file.","[QuickF5] If you just updated, ignore this message. You will have to rebind your keys."),20); 
-			ConfigHandler.fileCorrupt = false;
-			return;
+	public void onWorldLoad(WorldEvent.Load event) {				// singleplayer mode
+		if(!event.world.isRemote) {   
+			if(ConfigHandler.firstStart == true) {
+				updateCheck = false;
+				ConfigHandler.fileCorrupt = false;			// just in case something wierd happens
+				QuickF5.LOGGER.info("Thank you for installing quickF5! I hope that you enjoy it!");
+				new TickDelay(() ->  sendMessages("","[QuickF5] Thank you for installing quickF5! I hope that you enjoy it!","[QuickF5] If you want to configure the mod, type /quickF5 for more."),20); 
+				ConfigHandler.firstStart = false;
+				return;
+			}
+			if(updateCheck == true) {
+				new TickDelay(() -> sendUpdateMessage(),20);
+				updateCheck = false;
+				return;
+			}
+			if(ConfigHandler.fileCorrupt == true) {
+				try {
+					new TickDelay(() ->  sendMessages("","[QuickF5] An error occured while trying to read config file.","[QuickF5] If you just updated, ignore this message. You will have to rebind your keys."),20); 
+					ConfigHandler.fileCorrupt = false;
+					return;
+				} catch(NullPointerException e) {
+					LOGGER.fatal(e);
+					LOGGER.error("skipping corruption message, bad world return!");
+				}
+			}
 		}
 	}
+	@SubscribeEvent
+	public void onEntityJoinWorld(EntityJoinWorldEvent event) {				// server mode 
+        if (event.entity != null && event.entity instanceof EntityPlayer) {
+        	if(ConfigHandler.firstStart == true) {
+				updateCheck = false;
+				ConfigHandler.fileCorrupt = false;			// just in case something wierd happens
+				QuickF5.LOGGER.info("Thank you for installing quickF5! I hope that you enjoy it!");
+				new TickDelay(() ->  sendMessages("","[QuickF5] Thank you for installing quickF5! I hope that you enjoy it!","[QuickF5] If you want to configure the mod, type /quickF5 for more."),20); 
+				ConfigHandler.firstStart = false;
+				return;
+			}
+			if(updateCheck == true) {
+				new TickDelay(() -> sendUpdateMessage(),20);
+				updateCheck = false;
+				return;
+			}
+			if(ConfigHandler.fileCorrupt == true) {
+				try {
+					new TickDelay(() ->  sendMessages("","[QuickF5] An error occured while trying to read config file.","[QuickF5] If you just updated, ignore this message. You will have to rebind your keys."),20); 
+					ConfigHandler.fileCorrupt = false;
+					return;
+				} catch(NullPointerException e) {
+					LOGGER.fatal(e);
+					LOGGER.error("skipping corruption message, bad world return!");
+				}
+			}
+        }
+	}
+	
+	
+	
+	
 	private Runnable sendMessages(String message1, String message2, String message3) {
-		 mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + message1));
-		 mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + message2));
-		 mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + message3));
+		try {
+			mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + message1));
+			mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + message2));
+			mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + message3));
+		} catch(NullPointerException e) {
+			LOGGER.fatal(e);
+			LOGGER.error("skipping new message, bad world return!");
+		}
 		return null;
 	}
 	private Runnable sendUpdateMessage() {
-		IChatComponent comp = new ChatComponentText("Click here to update it!");
-		ChatStyle style = new ChatStyle().setChatClickEvent(new ClickEvent(Action.OPEN_URL,"https://github.com/nxtdaydelivery/quickF5/releases"));
-		style.setColor(EnumChatFormatting.DARK_AQUA);
-		style.setUnderlined(true);
-		comp.setChatStyle(style);
-		mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "--------------------------------------"));
-		mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + ("A newer version of QuickF5 is available! (" + UpdateChecker.latestVersion + ")")));
-		mc.thePlayer.addChatMessage(comp);
-		mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "--------------------------------------"));
+		try {
+			IChatComponent comp = new ChatComponentText("Click here to update it!");
+			ChatStyle style = new ChatStyle().setChatClickEvent(new ClickEvent(Action.OPEN_URL,"https://github.com/nxtdaydelivery/quickF5/releases"));
+			style.setColor(EnumChatFormatting.DARK_AQUA);
+			style.setUnderlined(true);
+			comp.setChatStyle(style);
+			mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "--------------------------------------"));
+			mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + ("A newer version of QuickF5 is available! (" + UpdateChecker.latestVersion + ")")));
+			mc.thePlayer.addChatMessage(comp);
+			mc.thePlayer.addChatMessage((IChatComponent)new ChatComponentText(EnumChatFormatting.DARK_AQUA + "--------------------------------------"));
+		} catch(NullPointerException e) {
+			LOGGER.fatal(e);
+			LOGGER.error("skipping update message, bad world return!");
+		}
 		return null;
 	}
 }
