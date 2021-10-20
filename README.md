@@ -40,3 +40,5 @@ Ad free downloads are availible on the Releases tab of this GitHub page: https:/
 Source Code is available in the code tab of this Git as well.
 
 Thank you for viewing! Feel free to report bugs and feature requests on this Git! Lots of new features to be added soon!
+
+**_Psst:_ Check out my new mod! https://github.com/nxtdaydelivery/quickStats**
