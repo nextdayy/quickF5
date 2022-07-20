@@ -1,16 +1,19 @@
 # QuickF5 by nextdaydelivery
 ## This mod is now archived! Please go to https://github.com/Polyfrost/BehindYouV3 for a new rewritten version.
+
+<br><br><br><br><br><br><br><br><br>
+### About QuickF5
 QuickF5 is simple, legit and free alternative to PerspectiveMod that allows toggling/holding in a different perspective.
 This mod does a very good job at providing a legitimate alternative to PerspectiveMod, allowing for easier viewing of nearby players while bridging, or whenever you want to use it. Its very useful in PvP senarios like BedWars and SkyWars, and even for general use. Optimized to work well on the Hypixel server and isn't banned!
 Also, No ghost chunks when turning around unlike PerspectiveMod, they load instantly and compatible with OptiFine zoom!
 
 
 
-# _Mod Showcase (video demo)_
+### _Mod Showcase (video demo)_
 Very simple and intuitive to use, with just a simple key press you can see all around your person!
 ![mod-showcase-1](https://user-images.githubusercontent.com/79922345/130941496-6417339a-b3d8-42db-a107-6def6199c72a.gif)
 
-# **Features**
+### **Features**
 
 **_Simple Configuration command /quickF5_**
 
@@ -35,7 +38,7 @@ This mod very quickly loads chunks in front and behind of the player, so players
 No ghost chunks when turning around unlike PerspectiveMod, they load instantly and compatible with OptiFine zoom!
     
     
-# **Downloads** 
+### **Downloads** 
 
 Ad free downloads are availible on the Releases tab of this GitHub page: https://github.com/nxtdaydelivery/quickF5/releases/
 Source Code is available in the code tab of this Git as well.
